@@ -30,29 +30,3 @@ precio_total filmacion =
     if total > 200
       then total - (total `div` 10)
       else total
-
-actualizar_persona :: Genero -> Int -> Pelicula -> Persona -> Persona
-actualizar_persona genero escenas_felices pelicula persona
-  | genero == Terror = persona { nivel_de_satisfaccion = max 0 (nivel_de_satisfaccion persona - litrosDeSangre pelicula) }
-  | genero == Comedia = persona { nivel_de_satisfaccion = nivel_de_satisfaccion persona * 2, nombre = nombre persona ++ " muy alegre" }
-  | genero == Drama =
-      let nuevas_escenas = min 3 escenas_felices
-          nuevaEdad = edad persona + 1
-          incrementoSatisfaccion = min 3 nuevas_escenas
-          nuevaSatisfaccion = nivel_de_satisfaccion persona + incrementoSatisfaccion
-      in
-        persona { edad = nuevaEdad, nivel_de_satisfaccion = nuevaSatisfaccion }
-  | genero == Accion ->
-      if pintaBuena pelicula
-        then persona { nivel_de_satisfaccion = nivel_de_satisfaccion persona + 100 }
-        else persona
-  | genero == Tragicomico ->
-      let personaComedia = actualizarPersona Comedia 0 pelicula persona
-          personaDrama = actualizarPersona Drama escenas_felices pelicula personaComedia
-      in
-        personaDrama { cantidad_de_films = cantidad_de_films personaDrama + 2 }
-  | genero == Aventura ->
-      if esVersionMala pelicula
-        then persona
-        else actualizarPersona Comedia 0 pelicula persona
-  | otherwise = persona
