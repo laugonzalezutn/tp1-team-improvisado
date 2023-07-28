@@ -18,8 +18,8 @@ precio_extra filmacion
 
 precio_total :: Filmacion -> Int
 precio_total filmacion =
-  let base = precioBase filmacion
-      extra = precioExtra filmacion
+  let base = precio_base filmacion
+      extra = precio_extra filmacion
       total = base + extra
   in
     if total > 200
@@ -64,11 +64,12 @@ verFilmacion persona filmacion = (genero filmacion) filmacion persona
 verFilmaciones :: Persona -> [Filmacion] -> Persona
 verFilmaciones persona filmaciones = foldl verFilmacion persona filmaciones
 
-tieneSatisfaccion :: (a -> a -> Bool) -> Persona -> Persona -> Persona
-tieneSatisfaccion comparador persona1 persona2 = comparador (satisfaccion persona1) (satisfaccion persona2)
+tieneSatisfaccion :: (Int -> Int -> Bool) -> Persona -> Persona -> Persona
+tieneSatisfaccion comparador persona1 persona2  | comparador (satisfaccion persona1) (satisfaccion persona2) = persona1
+                                                | otherwise = persona2
 
 tieneMasSatisfaccion :: [Persona] -> Persona
-tieneMasSatisfaccion listaPersonas = foldl1 (tieneSatisfaccion (max)) listaPersonas
+tieneMasSatisfaccion listaPersonas = foldl1 (tieneSatisfaccion (>)) listaPersonas
 
 neverPony :: [Persona] -> Filmacion -> Bool
 neverPony listaPersonas filmacion   | satisfaccion (verFilmacion (tieneMasSatisfaccion listaPersonas) filmacion) > 100 = True
